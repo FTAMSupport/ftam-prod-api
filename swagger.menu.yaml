@@ -1,0 +1,271 @@
+swagger: '2.0'
+info:
+  description: This API allows consumers to get a listing of Reborn Supported Restaurant's Menu information that includes ingredients as well
+  version: "1.0.0"
+  title: Menu API
+  # put the contact info for your development or API team
+  contact:
+    email: skalapa@reborn.technology
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# all paths will be relative to the basePath specified
+# basePath: /v1
+
+# tags are used for organizing operations
+tags:
+- name: Admins
+  description: Secured Admin-only calls
+- name: Developers
+  description: Operations available to regular developers
+- name: All
+  description: Operations available to regular public no-auth
+schemes:
+- https
+########### PATHS ################
+paths:
+##### GET MenuItemsSet for a given Entity Id  #####
+  /menu/getByEntityId/{entityId}:
+    get:
+      tags:
+      - Developers
+      summary: Retrieves menu items set for a given entity ID
+      operationId: getByEntityId
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: entityId
+        required: true
+        type: integer
+        format: int32
+        description: Required. The unique entity number
+      responses:
+        200:
+          description: Menu set for the provided entity number
+          schema:
+            $ref: '#/definitions/MenuDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+##### GET MenuItems for a given Restaurant Id  #####
+  /menu/getByRestaurantId/{restaurantId}:
+    get:
+      tags:
+      - Developers
+      summary: Retrieves menu items for a given restaurant ID
+      operationId: getByRestaurantId
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: restaurantId
+        required: true
+        type: integer
+        format: int32
+        description: Required. The unique restaurant number
+      responses:
+        200:
+          description: Menu details for the provided restaurant number
+          schema:
+            $ref: '#/definitions/MenuDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+########### DEFINITIONS ################
+definitions:
+  MenuDetails:
+    type: object
+    description: Contains detailed information about Menu Item, including ingredients
+    required:
+    - entityId
+    - restaurantId
+    properties:
+      entityId:
+        type: integer
+        format: int32
+        example: 0001
+        description: The unique entity number
+      restaurantId:
+        type: integer
+        format: int32
+        example: 0001
+        description: The unique restaurant number
+      menuId:
+        type: integer
+        format: int32
+        example: 000100010001
+        description: The unique menu number
+      category:
+        type: array
+        items:
+          $ref: '#/definitions/Category'
+
+  Category:
+    type: object
+    required:
+    - categoryId
+    - categoryName
+    - categoryDescription
+    properties:
+      categoryId:
+        type: integer
+        format: int32
+        example: 0001
+        description: The unique category number
+      categoryName:
+        type: string
+        example: Lunch
+        description: Category Name as in (Lunch, Breakfast, Pizzas, Salads, Drinks)
+      categoryDescription:
+        type: string
+        example: Lunch Items serverd with your favourite meats
+        description: Any description to better describe the Category group
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/Items'
+
+  Items:
+    type: object
+    required:
+    - itemId
+    - itemName
+    - itemDescription
+    - itemImage
+    - itemPrice
+    properties:
+      itemId:
+        type: integer
+        format: int32
+        example: 0001
+        description: The unique item number
+      itemName:
+        type: string
+        example: Egg & Chorizo Burrito
+        description: Item name to disaply on the menu
+      itemDescription:
+        type: string
+        example: Pan fried Egg & Chorizo Burrito served with lime sauce.
+        description: Any description to better describe the item
+      itemImage:
+        type: string
+        example: http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg
+        description: URL to the item image
+      itemPrice:
+        type: integer
+        format: int32
+        example: 12.00
+        description: Item price without taxes
+      itemCalories:
+        type: integer
+        format: int32
+        example: 220
+        description: Number of calories
+      ingredients:
+        type: array
+        items:
+          $ref: '#/definitions/Ingredients'
+      step:
+        type: array
+        items:
+          $ref: '#/definitions/Step'
+
+  Ingredients:
+    type: object
+    required:
+    - ingredientId
+    - ingredientName
+    - ingredientDescription
+    - ingredientImage
+    properties:
+      ingredientId:
+        type: integer
+        format: int32
+        example: 0001
+        description: The unique ingredient number
+      ingredientName:
+        type: string
+        example: Jalapeneos
+        description: ingredient name to disaply on the menu
+      ingredientDescription:
+        type: string
+        example: spicy handpicked
+        description: Any description to better describe the ingredeint
+      ingredientImage:
+        type: string
+        example: http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg
+        description: URL to the ingredient image
+      ingredientCustomizable:
+        type: boolean
+        example: false
+        description: can this be customized (as in opted out or ask for extra)
+
+  Step:
+    type: object
+    required:
+    - stepId
+    - stepText
+    - stepRequired
+    - stepMaxoptions
+    properties:
+      stepId:
+        type: integer
+        format: int32
+        example: 0001
+        description: The unique step identifier
+      stepText:
+        type: string
+        example: Your Coice of Meat
+        description: Text that has to be presented to the customer
+      stepRequired:
+        type: boolean
+        example: true
+        description: Is this required(to determine the item and price)
+      stepMaxoptions:
+        type: number
+        example: 1
+        description: Number of options that a customer can choose
+      options:
+        type: array
+        items:
+          $ref: '#/definitions/Options'
+
+  Options:
+    type: object
+    required:
+    - optionId
+    - optionText
+    - optionAdditionalPrice
+    properties:
+      optionId:
+        type: integer
+        format: int32
+        example: 0001
+        description: The unique option identifier
+      optionText:
+        type: string
+        example: Carne Asada
+        description: Text option that has to be presented to the customer
+      optionAdditionalPrice:
+        type: integer
+        format: int32
+        example: 0.50
+        description: Any additional price incurred in chosing this option
+
+  ##### COMMON OBJECTS  #####
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
+  ###########################

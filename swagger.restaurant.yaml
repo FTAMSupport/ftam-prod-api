@@ -1,0 +1,351 @@
+swagger: '2.0'
+info:
+  description: This API allows consumers to get a listing of Reborn Supported Restaurant location information
+    that includes hours and physical location.
+  version: "1.0.0"
+  title: Restaurant Location API
+  # put the contact info for your development or API team
+  contact:
+    email: skalapa@reborn.technology
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# all paths will be relative to the basePath specified
+# basePath: /v1
+
+# tags are used for organizing operations
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+- name: public
+  description: Operations available to regular public no-auth  
+schemes:
+- https
+########### PATHS ################
+paths:
+   ##### GET All Resturants  #####
+  /restaurant/getAllRestaurants:
+    get:
+      tags:
+      - developers
+      summary: Lists all registered restaurants with basic information
+      operationId: listRestaurants
+      produces:
+      - application/json
+      responses:
+        200:
+          description: List of all restaurants with basic information
+          schema:
+            $ref: '#/definitions/RestaurantDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  ##### GET All Resturants by Restaurant Id  #####
+  /restaurant/getByRestaurantId/{restaurantId}:
+    get:
+      tags:
+      - developers
+      summary: Retrieves a restaurant for a given restaurant ID
+      operationId: getRestaurant
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: restaurantId
+        required: true
+        type: integer
+        format: int32
+        description: Required. The unique restaurant number
+      responses:
+        200:
+          description: Restaurant details for the provided restaurant number
+          schema:
+            $ref: '#/definitions/RestaurantDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  ##### GET All Resturants by Entity Id #####
+  /restaurant/getByEntityId/{entityId}:
+    get:
+      tags:
+      - developers
+      summary: Retrieves list of restaurants associated with a registered entity
+      operationId: getRestaurant
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: entityId
+        required: true
+        type: integer
+        format: int32
+        description: Required. The unique Entity number
+      responses:
+        200:
+          description: Restaurant details for the provided Entity number
+          schema:
+            $ref: '#/definitions/RestaurantDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+########### DEFINITIONS ################
+definitions:
+  RestaurantDetails:
+    type: object
+    description: Contains detailed information about a restaurant, including location and hours
+    required:
+    - entityId
+    - restaurantId
+    properties:
+      entityId:
+        type: integer
+        format: int32
+        example: 0001
+        description: The unique restaurant number
+      restaurantId:
+        type: integer
+        format: int32
+        example: 0001
+        description: The unique restaurant number
+      name:
+        type: string
+        example: Yeyos Truck
+        description: Name of the restaurant
+      description:
+        type: string
+        example: Yeyos Mexican Grill (Truck) on the Square
+        description: The short, user friendly name of the restaurant
+      owner:
+        type: string
+        example: Rafael 
+        description: Restaurant Owner
+      address:
+        $ref: '#/definitions/Address'
+      coordinates:
+        $ref: '#/definitions/Coordinates'
+      phone:
+        type: string
+        example: 479-123-4567
+        description: The phone number of the restaurant
+      intersection:
+        type: string
+        example: SW A Street & Central avenue.
+        description: A major road intersection the restaurant is close to
+      timeZone:
+        type: string
+        example: Central Standard Time
+        description: The name of the time zone in which the restaurant is located
+      disabled:
+        type: boolean
+        example: false
+        description: Flag to determine if the restaraunt is disabled, meaning it should not be shown to users
+      openDate:
+        type: string
+        example: 10/09/2017
+        format: date
+        description: The date the restaurant first opened
+      onlineOrdering:
+        $ref: '#/definitions/OnlineOrdering'
+      dailyHours:
+          type: array
+          items:
+            $ref: '#/definitions/DailyHours'
+      specialHours:
+          type: array
+          items:
+            $ref: '#/definitions/SpecialHours'
+      OnlineOrderingClosedHours:
+          type: array
+          items:
+          $ref: '#/definitions/OnlineOrderingClosedHours'
+      Config:
+          type: array
+          items:
+          $ref: '#/definitions/Config'    
+                    
+  DailyHours:
+    type: object
+    description: The hours of operation for the phsyical restaurant on a given day of the week
+    properties:
+      dayOfWeek:
+        type: integer
+        format: int32
+        description: The index/number of the day of week (0=Sunday, 1=Monday... 6=Saturday)
+      dayName:
+        type: string
+        description: The day of the week name
+        example: Sunday
+      openTime:
+        type: string
+        description: The localized time of restaurant open on the day in a hh:mm format
+        example: "06:00"
+      closeTime:
+        type: string
+        description: The localized time of restaurant close on the day in a hh:mm format
+        example: "10:00"
+        
+  SpecialHours:
+    type: object
+    description: The hours of operation for the physical restaurant on a particular day, such as a holiday.
+    properties:
+      date:
+        type: string
+        example: "11/24/2017"
+        format: date
+        description: The date the special horus applies to
+      description:
+        type: string
+        example: "Thanksgiving"
+        description: A description of the special hours to be displayed
+      notificationBegin:
+        type: string
+        example: "2017-10-03T04:54:37.755Z"
+        format: date-time
+        description: The beginning date-time of when a notification should be given to the user
+      notificationEnd:
+        type: string
+        example: "2017-10-03T04:54:37.755Z"
+        format: date-time
+        description: The ending date-time of when a notification should be given to the user
+      openTime:
+        type: string
+        description: The localized time of restaurant open on the day in a hh:mm format
+        example: "06:00"
+      closeTime:
+        type: string
+        description: The localized time of restaurant close on the day in a hh:mm format
+        example: "22:00"
+      isClosed:
+        type: boolean
+        example: "false"
+        description: Flag to determine if the restaurant is closed for the entire day
+  
+  OnlineOrdering:
+    type: object
+    description: Details about online ordering status
+    properties:
+      enabled:
+        type: boolean
+        description: Flag to determine if online ordering is currently disabled (cannot start an order)
+      canPickup:
+        type: boolean
+        description: Flag to determine if online ordering pickup is currently disabled (can start an order, but not select pickup time to complete it)
+      canPayOnline:
+        type: boolean
+        description: Flag to determine if the restaurant accepts online payments
+      posSystem:
+        type: string
+        description: The type of POS system used by the restaurant
+        default: NCR
+        enum:
+        - IRIS
+        - NCR
+  Config: 
+   type: object
+   description: Details about the configuration specific to the resturant
+   properties:
+      splashImage1:
+        type: string
+        description: Image URL resource to pull the image that need to be displayed during the splash screen
+        exmaple: "https://spoonuniversity.com/wp-content/uploads/sites/193/2016/03/yeyos-outside-1024x683.jpg"
+      splashImage2:
+        type: string
+        description: Image URL resource to pull the image that need to be displayed during the splash screen
+        exmaple: "https://spoonuniversity.com/wp-content/uploads/sites/193/2016/03/yeyos-outside-1024x683.jpg"  
+      splashImage3:
+        type: string
+        description: Image URL resource to pull the image that need to be displayed during the splash screen
+        exmaple: "https://spoonuniversity.com/wp-content/uploads/sites/193/2016/03/yeyos-outside-1024x683.jpg"
+      splashText1:
+        type: string
+        description: Text that need to be displayed during the splash screen
+        exmaple: "Welcome to Yeyo's"      
+      splashText2:
+        type: string
+        description: Text that need to be displayed during the splash screen
+        exmaple: "Welcome to Yeyo's" 
+      splashText3:
+        type: string
+        description: Text that need to be displayed during the splash screen
+        exmaple: "Welcome to Yeyo's"  
+      notesLimit:
+        type: string
+        description: character limit for free flow description on the item customization
+        example: 90
+      guestName: 
+        type: string
+        description: The name for addressing thier guest users
+        example: : "Amigo" 
+       maxOrders:
+        type: string
+        description: Maximum limit on the line item orders, need this to see if item qualifies for bulk order    
+        example: 10            
+  ##### COMMON OBJECTS  #####
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
+        
+  Address:
+    type: object
+    required:
+    - address1
+    - city
+    - state
+    - zip
+    properties:
+      address1:
+        type: string
+        example: 122 W Central Ave
+        description: The street address or P.O. box
+      address2:
+        type: string
+        example: Truck
+        description: The apartment number, suite, unit, building, etc.
+      city:
+        type: string
+        example: Bentonville
+        description: The city name
+      state:
+        type: string
+        example: Arkansas or AR
+        description: The state, either full name or abbreviated
+      zip:
+        type: string
+        format: int32
+        example: 72712
+        description: The zip code
+        
+  Coordinates:
+    type: object
+    properties:
+      latitude:
+        type: number
+        format: double
+        example: 36.3724351
+        description: The latitude portion of the coordinates of the restaurant
+      longitude:
+        type: number
+        format: double
+        example: -94.2448077
+        description: The longitude portion of the coordinates of the restaurant
+        
+  ###########################
+  
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /mb332902/BobEvans.API.Ecomm.LocationService/1.0.0

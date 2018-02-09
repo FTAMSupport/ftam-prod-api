@@ -1,0 +1,57 @@
+'use strict';
+var utils = require('./utils.js');
+var constants = require('./constants.js');
+var router = require('express').Router();
+var stripe = require('stripe')(constants.stripe_secret_key);
+
+// post Stripe payment transaction
+router.post('/', function (request, response) {
+  console.log("stripe payment logic location; process environment mongo URL: " + process.env.MONGODB_URI);
+  var stripeToken = request.body.stripeToken;
+  var amountpayable = request.body.amount;
+  var metadata = request.body.metadata;
+  var charge = stripe.charges.create({
+    amount: amountpayable,
+    source: stripeToken,
+    metadata: metadata,
+    currency: 'USD',
+    description: 'Sample Strie Payment Transaction from nodeApi'
+  }, function (err, charge) {
+    if (err) {
+      console.log(err);
+      switch (err.type) {
+        case 'StripeCardError':
+          // A declined card error
+         response.json(err); // => e.g. "Your card's expiration year is invalid."
+          break;
+        case 'RateLimitError':
+          // Too many requests made to the API too quickly
+          response.json(err);
+          break;
+        case 'StripeInvalidRequestError':
+          // Invalid parameters were supplied to Stripe's API
+          response.json(err);
+          break;
+        case 'StripeAPIError':
+          // An error occurred internally with Stripe's API
+          response.json(err);
+          break;
+        case 'StripeConnectionError':
+          // Some kind of error occurred during the HTTPS communication
+          response.json(err);
+          break;
+        case 'StripeAuthenticationError':
+          // You probably used an incorrect API key
+          response.json(err);
+          break;
+        default:
+          // Handle any other types of unexpected errors
+          response.json("unknown error");
+          break;
+      }
+    } else
+      return response.json(charge);
+  })
+})
+
+module.exports = router;

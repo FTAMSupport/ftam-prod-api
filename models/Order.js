@@ -4,7 +4,7 @@ var uniqueValidator = require('mongoose-unique-validator');
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 var slug = require('slug');
 
-var allowedStatus = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
+var allowedStatus = ['pending', 'processing', 'inprocess', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
 var OrderSchema = new mongoose.Schema({
   entity_id: {
     type: mongoose.Schema.Types.Number,

@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var router = require('express').Router();
+var twilio = require('twilio');
+var client = new twilio("AC6b2282f9978b09fe807331c4c650f14b", "80b8c11c52b182b278d1e61b211cb804");
 var Order = mongoose.model('Order');
 var pay = require('./payment');
 const request = require('request-promise');
@@ -34,12 +36,36 @@ router.post('/', function (req, res, next) {
       order.order_status = "inprocess";
       order.set_piad = true;
       console.log('PP successfull!');
-      // Built-in save method to save to order details to the Database
+
+/*       // Built-in save method to save to order details to the Database
       order.save().then(function () {
         console.log('Order saved successfully!');
         return res.json({
           order: order.toPostJSON()
         });
+      }).catch(next); */
+
+      // Built-in save method to save to order details to the Database
+      order.save().then(function () {
+        const order1 = order.toPostJSON();
+        client.messages.create({
+          to:'+14795448054',
+          from: '+14798885134',
+          body:'Order # ' + order1.order_number
+      }, function(error, message) {
+          if (!error) {
+              console.log('Success! The SID for this SMS message is:');
+              console.log(message.sid);
+              console.log('Message sent on:');
+              console.log(message.dateCreated);
+              console.log('Order saved successfully!');
+              return res.json({
+                order: order.toPostJSON()
+                });
+          } else {
+                      console.log('Oops! There was an error.');
+        }
+      });
       }).catch(next);
     } else {
       console.log('PP error!');
@@ -111,7 +137,7 @@ router.get('/getByEntityIdAndRestaurantIdAndOrderStatus/:entity_id/:restaurant_i
  });
 
  // return a list of order items associated with a sepcific restaurant_id and entity_id
-router.get('/getByOrderStatus', auth.required, function (req, res, next) {
+router.get('/getByOrderStatus/:entity_id/:restaurant_id', auth.required, function (req, res, next) {
   console.log(req.params.entity_id);
   console.log(req.params.restaurant_id);
   Order.find({ $and: [{"entity_id": req.payload.entityId}, {"restaurant_id": req.payload.restaurantId}, {"order_status": req.query.order_status}] })

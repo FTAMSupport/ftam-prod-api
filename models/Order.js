@@ -511,7 +511,10 @@ OrderSchema.plugin(AutoIncrement, {inc_field: 'order_number'});
 OrderSchema.methods.toPostJSON = function () {
   return {
     order_number: this.order_number,
-    order_status: this.order_status
+    order_status: this.order_status,
+    total: this.total,
+    customer_phone_no: this.customer_phone_no,
+    line_items: this.line_items
   };
 };
 

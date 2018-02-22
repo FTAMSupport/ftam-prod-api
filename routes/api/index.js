@@ -6,6 +6,7 @@ router.use('/foodtrucks', require('./foodtrucks'));
 router.use('/tax', require('./taxesNew'));
 router.use('/order', require('./orders'));
 router.use('/pay', require('./payment'));
+router.use('/sms', require('./sms'));
 router.use('/stripePay', require('./stripePayment'));
 router.use('/payold', require('./paymentold'));
 router.use('/', require('./users'));

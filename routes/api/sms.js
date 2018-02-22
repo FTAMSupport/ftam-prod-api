@@ -8,7 +8,6 @@ var pay = require('./payment');
 const request = require('request-promise');
 const uuid = require('uuid4');
 var auth = require('../auth');
-var acl = require('../../authorization').getAcl();
 
 function get_user_id (req, res, next) {
   return req.payload.username;
@@ -17,18 +16,18 @@ function get_user_id (req, res, next) {
 router.post('/sms', (req, res) => {
   const twiml = new MessagingResponse();
 
-  if (req.body.Body == 'done') {
-    twiml.message('order marked as done');
-    //var api_uri = require('../../config').api_uri + "/updateOrder/:order_number"; //
+  if (req.body.Body.includes('done')) {
+    twiml.message('done');
+    var api_uri = require('../../config').api_uri + "/updateOrder/:order_number"; //
   }
-  else if (req.body.Body == 'working') {
-    twiml.message('order marked as working');
+  else if (req.body.Body.includes('working')) {
+    twiml.message('working');
   } 
-  else if (req.body.Body == 'status') {
+  else if (req.body.Body.includes('status')) {
     twiml.message('Your order will be ready in 10min');
   }
   else {
-    twiml.message('how can I help you? say text or done or working');
+    twiml.message('how can I help you?');
   }
 
   res.writeHead(200, {'Content-Type': 'text/xml'});

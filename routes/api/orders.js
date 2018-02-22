@@ -48,10 +48,15 @@ router.post('/', function (req, res, next) {
       // Built-in save method to save to order details to the Database
       order.save().then(function () {
         const order1 = order.toPostJSON();
+        let message = 'Order # ' + order1.order_number + '\n';
+        for (let value of order1.line_items) {
+          message = message + '\n' + (value.quantity + ' QTY ' + value.name + ' - ' + value.notes);
+        }
         client.messages.create({
           to:'+14795448054',
           from: '+14798885134',
-          body:'Order # ' + order1.order_number
+          body: message,
+          mediaUrl: 'https://static.wixstatic.com/media/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png/v1/fill/w_266,h_264,al_c,usm_0.66_1.00_0.01/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png'
       }, function(error, message) {
           if (!error) {
               console.log('Success! The SID for this SMS message is:');

@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var router = require('express').Router();
 var twilio = require('twilio');
+const MessagingResponse = require('twilio').twiml.MessagingResponse;
 var client = new twilio("AC6b2282f9978b09fe807331c4c650f14b", "80b8c11c52b182b278d1e61b211cb804");
 var Order = mongoose.model('Order');
 var pay = require('./payment');
@@ -12,6 +13,15 @@ var acl = require('../../authorization').getAcl();
 function get_user_id (req, res, next) {
   return req.payload.username;
 }
+
+router.post('/sms', (req, res) => {
+  const twiml = new MessagingResponse();
+
+  twiml.message('The Robots are coming! Head for the hills!');
+
+  res.writeHead(200, {'Content-Type': 'text/xml'});
+  res.end(twiml.toString());
+});
 
 // Create new Order
 router.post('/', function (req, res, next) {

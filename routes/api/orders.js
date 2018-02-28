@@ -2,7 +2,8 @@ var mongoose = require('mongoose');
 var router = require('express').Router();
 var twilio = require('twilio');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
-var client = new twilio("AC6b2282f9978b09fe807331c4c650f14b", "80b8c11c52b182b278d1e61b211cb804");
+//var client = new twilio("AC6b2282f9978b09fe807331c4c650f14b", "80b8c11c52b182b278d1e61b211cb804");
+var client = new twilio("ACbb15310684598fccc0626c923a8717be", "238cfb97f69cdd1122022277dd6395eb");
 var Order = mongoose.model('Order');
 var pay = require('./payment');
 const request = require('request-promise');
@@ -75,8 +76,10 @@ router.post('/', function (req, res, next) {
           message = message + '\n' + (value.quantity + ' QTY ' + value.name + ' - ' + value.notes);
         }
         client.messages.create({
+        //  to:'+14795448054',
+        //  from: '+14798885134',
           to:'+14795448054',
-          from: '+14798885134',
+          from: '+14797778337', //'+14798885134',
           body: message,
           mediaUrl: 'https://static.wixstatic.com/media/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png/v1/fill/w_266,h_264,al_c,usm_0.66_1.00_0.01/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png'
       }, function(error, message) {

@@ -18,6 +18,14 @@ var OrderSchema = new mongoose.Schema({
     match: [/^[a-zA-Z]+$/, 'is invalid'],
     index: true
   },
+  contact: [{
+    phone: {
+      type: mongoose.Schema.Types.String,
+      required: [false, "can't be blank"],
+      index: false
+    }
+  }
+   ],
   parent_id: {
     type: mongoose.Schema.Types.Number,
     required: [true, "can't be blank"],
@@ -512,6 +520,7 @@ OrderSchema.methods.toPostJSON = function () {
   return {
     order_number: this.order_number,
     order_status: this.order_status,
+    contact: this.contact,
     total: this.total,
     customer_phone_no: this.customer_phone_no,
     line_items: this.line_items

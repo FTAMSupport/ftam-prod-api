@@ -75,27 +75,28 @@ router.post('/', function (req, res, next) {
         for (let value of order1.line_items) {
           message = message + '\n' + (value.quantity + ' QTY ' + value.name + ' - ' + value.notes);
         }
-        client.messages.create({
-        //  to:'+14795448054',
-        //  from: '+14798885134',
-          to:'+14795448054',
-          from: '+14797778337', //'+14798885134',
-          body: message,
-          mediaUrl: 'https://static.wixstatic.com/media/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png/v1/fill/w_266,h_264,al_c,usm_0.66_1.00_0.01/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png'
-      }, function(error, message) {
-          if (!error) {
-              console.log('Success! The SID for this SMS message is:');
-              console.log(message.sid);
-              console.log('Message sent on:');
-              console.log(message.dateCreated);
-              console.log('Order saved successfully!');
-              return res.json({
-                order: order.toPostJSON()
-                });
-          } else {
-                      console.log('Oops! There was an error.');
-        }
-      });
+        var toPhoneNumbers = order1.contact; 
+        Object.keys(toPhoneNumbers).map(function(key, index) {
+          client.messages.create({
+              to:  toPhoneNumbers[key].phone, 
+              from: '+14797778337',
+              body: message
+             // mediaUrl: 'https://static.wixstatic.com/media/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png/v1/fill/w_266,h_264,al_c,usm_0.66_1.00_0.01/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png'
+          }, function(error, message) {
+              if (!error) {
+                  console.log('Success! The SID for this SMS message is:');
+                  console.log(message.sid);
+                  console.log('Message sent on:');
+                  console.log(message.dateCreated);
+                  console.log('Order saved successfully!');
+                  return res.json({
+                    order: order.toPostJSON()
+                    });
+              } else {
+                          console.log('Oops! There was an error.');
+            }
+          })
+       });
       }).catch(next);
     } else {
       console.log('PP error!');

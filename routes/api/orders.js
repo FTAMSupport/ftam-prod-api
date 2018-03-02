@@ -71,15 +71,14 @@ router.post('/', function (req, res, next) {
       // Built-in save method to save to order details to the Database
       order.save().then(function () {
         const order1 = order.toPostJSON();
-        let message = 'Order # ' + order1.order_number + '\n';
+        let message = 'Order # ' + order1.order_number;
+        if (order1.customer_phone_no){
+          message = message + ' \n ' + 'Phone #' + order1.customer_phone_no;
+        }
         for (let value of order1.line_items) {
           message = message + '\n' + (value.quantity + ' QTY ' + value.name);
           if (value.notes){
             message = message + ' - ' + value.notes;
-          }
-          //
-          if (order1.customer_phone_no){
-            message = message + ' n ' + 'Phone #' + order1.customer_phone_no;
           }
         }
         var toPhoneNumbers = order1.contact; 

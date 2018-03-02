@@ -73,7 +73,14 @@ router.post('/', function (req, res, next) {
         const order1 = order.toPostJSON();
         let message = 'Order # ' + order1.order_number + '\n';
         for (let value of order1.line_items) {
-          message = message + '\n' + (value.quantity + ' QTY ' + value.name + ' - ' + value.notes);
+          message = message + '\n' + (value.quantity + ' QTY ' + value.name);
+          if (value.notes){
+            message = message + ' - ' + value.notes;
+          }
+          //
+          if (value.customer_phone_no){
+            message = message + ' n ' + 'Phone #' + value.customer_phone_no;
+          }
         }
         var toPhoneNumbers = order1.contact; 
         Object.keys(toPhoneNumbers).map(function(key, index) {

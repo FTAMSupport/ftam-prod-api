@@ -78,7 +78,7 @@ router.post('/', function (req, res, next) {
             message = message + ' - ' + value.notes;
           }
           //
-          if (value.customer_phone_no){
+          if (order1.customer_phone_no){
             message = message + ' n ' + 'Phone #' + order1.customer_phone_no;
           }
         }

@@ -79,7 +79,7 @@ router.post('/', function (req, res, next) {
           }
           //
           if (value.customer_phone_no){
-            message = message + ' n ' + 'Phone #' + value.customer_phone_no;
+            message = message + ' n ' + 'Phone #' + order1.customer_phone_no;
           }
         }
         var toPhoneNumbers = order1.contact; 

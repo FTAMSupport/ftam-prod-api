@@ -49,8 +49,8 @@ router.get('/getByEntityIdAndRestaurantId/:entityId/:restaurantId', function (re
     });
 });
 
-// post
-router.post('/postMenuEntry', auth.required, acl.middleware(3, get_user_id, 'post'), function (req, res, next) {
+// post (behind auth)
+/* router.post('/postMenuEntry', auth.required, acl.middleware(3, get_user_id, 'post'), function (req, res, next) {
   User.findById(req.payload.id).then(function (user) {
     if (!user) {
       return res.sendStatus(401);
@@ -69,6 +69,23 @@ router.post('/postMenuEntry', auth.required, acl.middleware(3, get_user_id, 'pos
       });
     }).catch(next);
   });
-});
+}); */
+
+// post (without auth)
+router.post('/postMenuEntry', function (req, res, next) {
+    var menu = new Menu();
+    menu.entityId = req.body.entityId;
+    menu.restaurantId = req.body.restaurantId;
+    menu.menuId = req.body.menuId;
+    menu.category = req.body.category;
+    menu.category.item = req.body.category.item;
+    // call the built-in save method to save to the database
+    menu.save().then(function () {
+      console.log('Menu saved successfully!');
+      return res.json({
+        menu: menu.toPostJSON()
+      });
+    }).catch(next);
+  });
 
 module.exports = router;

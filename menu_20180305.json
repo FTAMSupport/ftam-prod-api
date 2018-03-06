@@ -1,0 +1,157 @@
+{
+	"updatedAt" : {
+		"$date" : 1510344301039
+	},
+	"createdAt" : {
+		"$date" : 1510344301039
+	},
+	"menuId" : 1,
+	"restaurantId" : 1,
+	"entityId" : 4,
+	"category" : [
+		{
+			"categoryId" : 1,
+			"categoryName" : "Breakfast",
+			"categoryDescription" : "Breakfast Items",
+			"item" : [
+				{
+					"itemId" : 1,
+					"itemName" : "Egg & Chorizo Burrito",
+					"itemDescription" : "Pan fried Egg & Chorizo Burrito served with lime sauce.",
+					"itemImage" : "http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg",
+					"itemPrice" : 5.95,
+					"itemCalories" : 250,
+					"step" : [ ],
+					"ingredients" : [
+						{
+							"ingredientId" : 1,
+							"ingredientName" : "lettuce",
+							"ingredientDescription" : "fresh salad lettuce",
+							"ingredientImage" : "http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg",
+							"ingredientCustomizable" : false
+						},
+						{
+							"ingredientId" : 2,
+							"ingredientName" : "jalapenos",
+							"ingredientDescription" : "fresh spicy jalapenos",
+							"ingredientImage" : "http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg",
+							"ingredientCustomizable" : false
+						}
+					]
+				},
+				{
+					"itemId" : 2,
+					"itemName" : "Egg & Cheese Burrito",
+					"itemDescription" : "5 pcs. marinated chicken on skewers. Served with peanut sauce and cucumber salad",
+					"itemImage" : "http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg",
+					"itemPrice" : 5.95,
+					"itemCalories" : 250,
+					"step" : [ ],
+					"ingredients" : [
+						{
+							"ingredientId" : 1,
+							"ingredientName" : "lettuce",
+							"ingredientDescription" : "fresh salad lettuce",
+							"ingredientImage" : "http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg",
+							"ingredientCustomizable" : false
+						},
+						{
+							"ingredientId" : 2,
+							"ingredientName" : "jalapenos",
+							"ingredientDescription" : "fresh spicy jalapenos",
+							"ingredientImage" : "http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg",
+							"ingredientCustomizable" : false
+						}
+					]
+				},
+				{
+					"itemId" : 3,
+					"itemName" : "Egg & Sausage Burrito",
+					"itemDescription" : "6 pcs. deep-fried wontons served with cream cheese and crab meat. Served with plum sauce",
+					"itemImage" : "http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg",
+					"itemPrice" : 5.95,
+					"itemCalories" : 250,
+					"step" : [ ],
+					"ingredients" : [
+						{
+							"ingredientId" : 1,
+							"ingredientName" : "lettuce",
+							"ingredientDescription" : "fresh salad lettuce",
+							"ingredientImage" : "http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg",
+							"ingredientCustomizable" : false
+						},
+						{
+							"ingredientId" : 2,
+							"ingredientName" : "jalapenos",
+							"ingredientDescription" : "fresh spicy jalapenos",
+							"ingredientImage" : "http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg",
+							"ingredientCustomizable" : false
+						}
+					]
+				}
+			]
+		},
+		{
+			"categoryId" : 2,
+			"categoryName" : "Lunch & Dinner",
+			"categoryDescription" : "Lunch & Dinner Items",
+			"item" : [
+				{
+					"itemId" : 1,
+					"itemName" : "Burrito Bowl - 1",
+					"itemDescription" : "One 32' domed bowl with Mexican rice &beans topped with your choice of meat or veggies, lettuce, pico, guacamole, sour cream, home made tortilla chips and roasted tomatillo salsa verde",
+					"itemImage" : "http://www.organizeyourselfskinny.com/wp-content/uploads/2011/10/DSC01526.jpg",
+					"itemPrice" : 10,
+					"itemCalories" : 450,
+					"step" : [
+						{
+							"stepId" : 1,
+							"stepText" : "Your choice of meat?",
+							"stepRequired" : true,
+							"stepMaxoptions" : 1,
+							"options" : [
+								{
+									"optionId" : 1,
+									"optionText" : "Carne Asada",
+									"optionAdditionalPrice" : 2
+								},
+								{
+									"optionId" : 2,
+									"optionText" : "Al Pastor Citrus",
+									"optionAdditionalPrice" : 2
+								},
+								{
+									"optionId" : 3,
+									"optionText" : "Bob's Campechano",
+									"optionAdditionalPrice" : 2
+								},
+								{
+									"optionId" : 4,
+									"optionText" : "Barbacoa",
+									"optionAdditionalPrice" : 2
+								}
+							]
+						}
+					],
+					"ingredients" : [
+						{
+							"ingredientId" : 1,
+							"ingredientName" : "lettuce",
+							"ingredientDescription" : "fresh salad lettuce",
+							"ingredientImage" : "http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg",
+							"ingredientCustomizable" : false
+						},
+						{
+							"ingredientId" : 2,
+							"ingredientName" : "jalapenos",
+							"ingredientDescription" : "fresh spicy jalapenos",
+							"ingredientImage" : "http://www.goodfoodchannel.org/wp-content/uploads/2016/01/super-sonic-breakfast-burrito.jpg",
+							"ingredientCustomizable" : false
+						}
+					]
+				}
+			]
+		}
+	],
+	"__v" : 0
+}

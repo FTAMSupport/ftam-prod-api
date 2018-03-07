@@ -11,7 +11,7 @@ const uuid = require('uuid4');
 var auth = require('../auth');
 var acl = require('../../authorization').getAcl();
 
-function get_user_id (req, res, next) {
+function get_user_id(req, res, next) {
   return req.payload.username;
 }
 
@@ -21,18 +21,17 @@ router.post('/sms', (req, res) => {
   if (req.body.Body == 'done') {
     twiml.message('order marked as done');
     //var api_uri = require('../../config').api_uri + "/updateOrder/:order_number"; //
-  }
-  else if (req.body.Body == 'working') {
+  } else if (req.body.Body == 'working') {
     twiml.message('order marked as working');
-  } 
-  else if (req.body.Body == 'status') {
+  } else if (req.body.Body == 'status') {
     twiml.message('Your order will be ready in 10min');
-  }
-  else {
+  } else {
     twiml.message('how can I help you? say text or done or working');
   }
 
-  res.writeHead(200, {'Content-Type': 'text/xml'});
+  res.writeHead(200, {
+    'Content-Type': 'text/xml'
+  });
   res.end(twiml.toString());
 });
 
@@ -60,49 +59,85 @@ router.post('/', function (req, res, next) {
       order.set_piad = true;
       console.log('PP successfull!');
 
-/*       // Built-in save method to save to order details to the Database
-      order.save().then(function () {
-        console.log('Order saved successfully!');
-        return res.json({
-          order: order.toPostJSON()
-        });
-      }).catch(next); */
+      /*       // Built-in save method to save to order details to the Database
+            order.save().then(function () {
+              console.log('Order saved successfully!');
+              return res.json({
+                order: order.toPostJSON()
+              });
+            }).catch(next); */
 
       // Built-in save method to save to order details to the Database
       order.save().then(function () {
         const order1 = order.toPostJSON();
         let message = 'Order # ' + order1.order_number;
-        if (order1.customer_phone_no){
+
+        if (order1.customer_phone_no) {
           message = message + ' \n ' + 'Phone #' + order1.customer_phone_no;
         }
+
         for (let value of order1.line_items) {
           message = message + '\n' + (value.quantity + ' QTY ' + value.name);
-          if (value.notes){
+          if (value.notes) {
             message = message + ' - ' + value.notes;
           }
         }
-        var toPhoneNumbers = order1.contact; 
-        Object.keys(toPhoneNumbers).map(function(key, index) {
-          client.messages.create({
-              to:  toPhoneNumbers[key].phone, 
-              from: '+14797778337',
-              body: message
-             // mediaUrl: 'https://static.wixstatic.com/media/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png/v1/fill/w_266,h_264,al_c,usm_0.66_1.00_0.01/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png'
-          }, function(error, message) {
-              if (!error) {
-                  console.log('Success! The SID for this SMS message is:');
-                  console.log(message.sid);
-                  console.log('Message sent on:');
-                  console.log(message.dateCreated);
-                  console.log('Order saved successfully!');
-                  return res.json({
-                    order: order.toPostJSON()
-                    });
-              } else {
-                          console.log('Oops! There was an error.');
-            }
+        var toPhoneNumbers = order1.contact;
+        //const numbers = [order1.contact[0],order1.contact[1],order1.contact[2]];
+        const numbers = [];
+        if (order1.contact[0]){
+          numbers.push(order1.contact[0]);
+        }
+        if (order1.contact[1]){
+          numbers.push(order1.contact[1]);
+        }
+        if (order1.contact[2]){
+          numbers.push(order1.contact[2]);
+        }
+
+        Promise.all(
+          numbers.map(number => {
+              return client.messages.create({
+                to: number.phone,
+                from: '+14797778337',
+                body: message
+              });
+            })
+          )
+          .then(messages => {
+            console.log('Success! The SID for this SMS message is:');
+            console.log(message.sid);
+            console.log('Message sent on:');
+            console.log(message.dateCreated);
+            console.log('Order saved successfully!');
+            return res.json({
+              order: order.toPostJSON()
+            });
           })
-       });
+          .catch(err => console.error(err));
+        /*         var toPhoneNumbers = order1.contact; 
+                Object.keys(toPhoneNumbers).map(function(key, index) {
+                  console.log(toPhoneNumbers[key].phone);
+                  client.messages.create({
+                      to:  toPhoneNumbers[key].phone, //'+14795448054',
+                      from: '+14797778337',
+                      body: message
+                     // mediaUrl: 'https://static.wixstatic.com/media/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png/v1/fill/w_266,h_264,al_c,usm_0.66_1.00_0.01/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png'
+                  }, function(error, message) {
+                      if (!error) {
+                          console.log('Success! The SID for this SMS message is:');
+                          console.log(message.sid);
+                          console.log('Message sent on:');
+                          console.log(message.dateCreated);
+                          console.log('Order saved successfully!');
+                          return res.json({
+                            order: order.toPostJSON()
+                            });
+                      } else {
+                                  console.log('Oops! There was an error.');
+                    }
+                  })
+               }); */
       }).catch(next);
     } else {
       console.log('PP error!');
@@ -135,18 +170,26 @@ router.get('/getByRestaurantId/:restaurant_id', function (req, res, next) {
 router.get('/getByEntityIdAndRestaurantId/:entity_id/:restaurant_id', function (req, res, next) {
   console.log(req.params.entity_id);
   console.log(req.params.restaurant_id);
-  Order.find({ $and: [{"entity_id": req.params.entity_id}, {"restaurant_id": req.params.restaurant_id}] })
-   .exec(function (err, orders) {
-     if (err) return console.error(err);
-     return res.json(orders);
-   });
- });
+  Order.find({
+      $and: [{
+        "entity_id": req.params.entity_id
+      }, {
+        "restaurant_id": req.params.restaurant_id
+      }]
+    })
+    .exec(function (err, orders) {
+      if (err) return console.error(err);
+      return res.json(orders);
+    });
+});
 
- // return a list of order items associated with a sepcific Entity_Id
+// return a list of order items associated with a sepcific Entity_Id
 router.get('/getByEntityIdAndOrderStatus/:entity_id', function (req, res, next) {
   console.log(req.params.entity_id);
   // Find all data in the Order collection 
-  Order.find({order_status: req.query.order_status}).where("entity_id", req.params.entity_id).exec(function (err, orders) {
+  Order.find({
+    order_status: req.query.order_status
+  }).where("entity_id", req.params.entity_id).exec(function (err, orders) {
     if (err) return console.error(err);
     return res.json(orders);
   });
@@ -156,7 +199,9 @@ router.get('/getByEntityIdAndOrderStatus/:entity_id', function (req, res, next) 
 router.get('/getByRestaurantIdAndOrderStatus/:restaurant_id', function (req, res, next) {
   console.log(req.params.restaurant_id);
   // Find all data in the Order collection 
-  Order.find({order_status: req.query.order_status}).where("restaurant_id", req.params.restaurant_id).exec(function (err, orders) {
+  Order.find({
+    order_status: req.query.order_status
+  }).where("restaurant_id", req.params.restaurant_id).exec(function (err, orders) {
     if (err) return console.error(err);
     return res.json(orders);
   });
@@ -166,32 +211,58 @@ router.get('/getByRestaurantIdAndOrderStatus/:restaurant_id', function (req, res
 router.get('/getByEntityIdAndRestaurantIdAndOrderStatus/:entity_id/:restaurant_id', function (req, res, next) {
   console.log(req.params.entity_id);
   console.log(req.params.restaurant_id);
-  Order.find({ $and: [{"entity_id": req.params.entity_id}, {"restaurant_id": req.params.restaurant_id}, {"order_status": req.query.order_status}] })
-   .exec(function (err, orders) {
-     if (err) return console.error(err);
-     return res.json(orders);
-   });
- });
+  Order.find({
+      $and: [{
+        "entity_id": req.params.entity_id
+      }, {
+        "restaurant_id": req.params.restaurant_id
+      }, {
+        "order_status": req.query.order_status
+      }]
+    })
+    .exec(function (err, orders) {
+      if (err) return console.error(err);
+      return res.json(orders);
+    });
+});
 
- // return a list of order items associated with a sepcific restaurant_id and entity_id
+// return a list of order items associated with a sepcific restaurant_id and entity_id
 router.get('/getByOrderStatus/:entity_id/:restaurant_id', auth.required, function (req, res, next) {
   console.log(req.params.entity_id);
   console.log(req.params.restaurant_id);
-  Order.find({ $and: [{"entity_id": req.payload.entityId}, {"restaurant_id": req.payload.restaurantId}, {"order_status": req.query.order_status}] })
-   .exec(function (err, orders) {
-     if (err) return console.error(err);
-     return res.json(orders);
-   });
- });
+  Order.find({
+      $and: [{
+        "entity_id": req.payload.entityId
+      }, {
+        "restaurant_id": req.payload.restaurantId
+      }, {
+        "order_status": req.query.order_status
+      }]
+    })
+    .exec(function (err, orders) {
+      if (err) return console.error(err);
+      return res.json(orders);
+    });
+});
 
- // update the details of a specific order item
+// update the details of a specific order item
 router.put('/updateOrder/:entity_id/:restaurant_id/:order_number', function (req, res, next) {
   console.log(req.params.entity_id);
   // Find all data in the Order collection 
   //var query = {'order_number': req.params.order_number};
-  let query = { $and: [{"entity_id": req.params.entity_id}, {"restaurant_id": req.params.restaurant_id}, {'order_number': req.params.order_number}] };
+  let query = {
+    $and: [{
+      "entity_id": req.params.entity_id
+    }, {
+      "restaurant_id": req.params.restaurant_id
+    }, {
+      'order_number': req.params.order_number
+    }]
+  };
   let newData = req.body;
-  Order.findOneAndUpdate(query, newData, {upsert: false}, function (err, doc) {
+  Order.findOneAndUpdate(query, newData, {
+    upsert: false
+  }, function (err, doc) {
     if (err) return res.send(500, {
       error: err
     });
@@ -203,9 +274,13 @@ router.put('/updateOrder/:entity_id/:restaurant_id/:order_number', function (req
 router.put('/updateOrder/:order_number', function (req, res, next) {
   console.log(req.params.entity_id);
   // Find all data in the Order collection 
-  var query = {'order_number': req.params.order_number};
+  var query = {
+    'order_number': req.params.order_number
+  };
   let newData = req.body;
-  Order.findOneAndUpdate(query, newData, {upsert: false}, function (err, doc) {
+  Order.findOneAndUpdate(query, newData, {
+    upsert: false
+  }, function (err, doc) {
     if (err) return res.send(500, {
       error: err
     });

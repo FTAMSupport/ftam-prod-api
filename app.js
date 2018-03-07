@@ -39,7 +39,8 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
-var uri = "mongodb://admin:admin@cluster0-shard-00-00-ns1n7.mongodb.net:27017,cluster0-shard-00-01-ns1n7.mongodb.net:27017,cluster0-shard-00-02-ns1n7.mongodb.net:27017/ftam?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
+//var uri = "mongodb://admin:admin@cluster0-shard-00-00-ns1n7.mongodb.net:27017,cluster0-shard-00-01-ns1n7.mongodb.net:27017,cluster0-shard-00-02-ns1n7.mongodb.net:27017/ftam?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
+var uri = "mongodb://admin:admin@cluster0-shard-00-00-9mqcl.mongodb.net:27017,cluster0-shard-00-01-9mqcl.mongodb.net:27017,cluster0-shard-00-02-9mqcl.mongodb.net:27017/ftam_dev?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
 
 if (isProduction) {
   mongoose.connect(process.env.MONGODB_URI);

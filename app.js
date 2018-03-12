@@ -7,7 +7,8 @@ var http = require('http'),
   cors = require('cors'),
   passport = require('passport'),
   errorhandler = require('errorhandler'),
-  mongoose = require('mongoose');
+  mongoose = require('mongoose'),
+  config = require('./config');
 
 var isProduction = process.env.NODE_ENV === 'production';
 var secret = require('./config').secret;
@@ -27,7 +28,6 @@ app.use(express.static(__dirname + '/public'));
 
 // Session management
 var RedisStore = require("connect-redis")(session);
-console.log(process.env.SECRET);
 app.use(session({
   store: new RedisStore(),
   secret: secret,
@@ -39,9 +39,6 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
-//var uri = "mongodb://admin:admin@cluster0-shard-00-00-ns1n7.mongodb.net:27017,cluster0-shard-00-01-ns1n7.mongodb.net:27017,cluster0-shard-00-02-ns1n7.mongodb.net:27017/ftam?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
-var uri = "mongodb://admin:admin@cluster0-shard-00-00-9mqcl.mongodb.net:27017,cluster0-shard-00-01-9mqcl.mongodb.net:27017,cluster0-shard-00-02-9mqcl.mongodb.net:27017/ftam_dev?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
-
 if (isProduction) {
   mongoose.connect(process.env.MONGODB_URI);
   mongoose.connection.on('connected', function (test) {
@@ -52,6 +49,7 @@ if (isProduction) {
     process.exit(1);
   });
 } else {
+  var uri = config.mongo_uri;
   mongoose.connect(uri);
   mongoose.connection.on('connected', function (test) {
     require('./authorization').init();

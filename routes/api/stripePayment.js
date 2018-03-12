@@ -1,12 +1,10 @@
 'use strict';
-var utils = require('./utils.js');
-var constants = require('./constants.js');
 var router = require('express').Router();
-var stripe = require('stripe')(constants.stripe_secret_key);
+var config = require('../../config');
+var stripe = require('stripe')(config.stripe_secret_key);
 
 // post Stripe payment transaction
 router.post('/', function (request, response) {
-  console.log("stripe payment logic location; process environment mongo URL: " + process.env.MONGODB_URI);
   var stripeToken = request.body.stripeToken;
   var amountpayable = request.body.amount;
   var metadata = request.body.metadata;
@@ -15,7 +13,7 @@ router.post('/', function (request, response) {
     source: stripeToken,
     metadata: metadata,
     currency: 'USD',
-    description: 'Sample Strie Payment Transaction from nodeApi'
+    description: 'Strie Payment Transaction from nodeApi'
   }, function (err, charge) {
     if (err) {
       console.log(err);

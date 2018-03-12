@@ -2,10 +2,9 @@ var mongoose = require('mongoose');
 var router = require('express').Router();
 var twilio = require('twilio');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
-//var client = new twilio("AC6b2282f9978b09fe807331c4c650f14b", "80b8c11c52b182b278d1e61b211cb804");
-var client = new twilio("ACbb15310684598fccc0626c923a8717be", "238cfb97f69cdd1122022277dd6395eb");
+var config = require('../../config');
+var client = new twilio(config.twilio_sid, config.twilio_auth_token);
 var Order = mongoose.model('Order');
-var pay = require('./payment');
 const request = require('request-promise');
 const uuid = require('uuid4');
 var auth = require('../auth');
@@ -42,7 +41,7 @@ router.post('/', function (req, res, next) {
   console.log("payment info" + payment);
   // PP -> Authorize and Charge - OLD
   // PP -> Create an Accept Payment Transaction - NEW
-  var api_uri = require('../../config').api_uri + "/api/stripePay";
+  var api_uri = config.api_uri + "/api/stripePay";
   request({
     url: api_uri,
     method: 'POST',
@@ -99,7 +98,7 @@ router.post('/', function (req, res, next) {
           numbers.map(number => {
               return client.messages.create({
                 to: number.phone,
-                from: '+14797778337',
+                from: config.twilio_from_number, //'+14797778337',
                 body: message
               });
             })

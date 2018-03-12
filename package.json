@@ -1,5 +1,5 @@
 {
-  "name": "reborn-node",
+  "name": "ftam-prod-api",
   "version": "1.0.0",
   "description": "Cosmo-Mongo on node",
   "main": "app.js",

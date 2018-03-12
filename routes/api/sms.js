@@ -2,12 +2,12 @@ var mongoose = require('mongoose');
 var router = require('express').Router();
 var twilio = require('twilio');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
-var client = new twilio("ACbb15310684598fccc0626c923a8717be", "238cfb97f69cdd1122022277dd6395eb");
 var Order = mongoose.model('Order');
-var pay = require('./payment');
 const request = require('request-promise');
 const uuid = require('uuid4');
 var auth = require('../auth');
+var config = require('../../config');
+var client = new twilio(config.twilio_sid, config.twilio_auth_token);
 
 function get_user_id(req, res, next) {
   return req.payload.username;
@@ -40,7 +40,7 @@ router.post('/', function (req, res, next) {
   console.log("payment info" + payment);
   // PP -> Authorize and Charge - OLD
   // PP -> Create an Accept Payment Transaction - NEW
-  var api_uri = require('../../config').api_uri + "/api/stripePay";
+  var api_uri = config.api_uri + "/api/stripePay";
   request({
     url: api_uri,
     method: 'POST',
@@ -83,7 +83,7 @@ router.post('/', function (req, res, next) {
         Object.keys(toPhoneNumbers).map(function (key, index) {
           client.messages.create({
             to: toPhoneNumbers[key].phone,
-            from: '+14797778337',
+            from: config.twilio_from_number, //'+14797778337',
             body: message
             // mediaUrl: 'https://static.wixstatic.com/media/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png/v1/fill/w_266,h_264,al_c,usm_0.66_1.00_0.01/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png'
           }, function (error, message) {

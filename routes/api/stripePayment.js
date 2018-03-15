@@ -8,12 +8,14 @@ router.post('/', function (request, response) {
   var stripeToken = request.body.stripeToken;
   var amountpayable = request.body.amount;
   var metadata = request.body.metadata;
+  var receipt_email = request.body.metadata.stripeEmail;
   var charge = stripe.charges.create({
     amount: amountpayable,
     source: stripeToken,
     metadata: metadata,
     currency: 'USD',
-    description: 'Strie Payment Transaction from nodeApi'
+    description: 'Strie Payment Transaction from nodeApi',
+    receipt_email: receipt_email
   }, function (err, charge) {
     if (err) {
       console.log(err);

@@ -14,7 +14,7 @@ router.post('/', function (request, response) {
     source: stripeToken,
     metadata: metadata,
     currency: 'USD',
-    description: 'Strie Payment Transaction from nodeApi',
+    description: 'Your total transaction amount',
     receipt_email: receipt_email
   }, function (err, charge) {
     if (err) {

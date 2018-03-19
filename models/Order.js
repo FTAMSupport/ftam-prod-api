@@ -124,6 +124,11 @@ var OrderSchema = new mongoose.Schema({
     required: [false, "can't be blank"],
     index: false
   },
+  customer_name: {
+    type: mongoose.Schema.Types.String,
+    required: [false, "can't be blank"],
+    index: false
+  },
   customer_ip_address: {
     type: mongoose.Schema.Types.String,
     required: [false, "can't be blank"],
@@ -523,6 +528,7 @@ OrderSchema.methods.toPostJSON = function () {
     contact: this.contact,
     total: this.total,
     customer_phone_no: this.customer_phone_no,
+    customer_name: this.customer_name,
     line_items: this.line_items
   };
 };

@@ -28,10 +28,11 @@ router.get('/getAllRestaurants', function (req, res, next) {
   });
 });
 
-// return list of all the trusted vendor phone numbers from registered restaurants
+// deprecated: return list of all the trusted vendor phone numbers from registered restaurants
 router.get('/getAllPhoneNumbers/:phoneNumber', function (req, res, next) {
+  var phone = decodeURIComponent(req.params.phoneNumber);
   // Find all Phonedata in the Restaurant collection
-  Restaurant.find().where({"contact.phone": req.params.phoneNumber}).exec(function (err, restaurant) {
+  Restaurant.find().where({"contact.phone": phone}).exec(function (err, restaurant) {
     if (err) return console.error(err);
     return res.json(restaurant);
     //if(restaurant.length !== 0){
@@ -40,6 +41,17 @@ router.get('/getAllPhoneNumbers/:phoneNumber', function (req, res, next) {
     //  return res.send(403, "untrusted");
     //}
   });
+});
+
+  // return list of all the trusted vendor phone numbers from registered restaurants
+router.post('/validatePhoneNumber', function (req, res, next) {
+  var phone = req.body.phone;
+  // Find all Phonedata in the Restaurant collection
+  Restaurant.find().where({"contact.phone": phone}).exec(function (err, restaurant) {
+    if (err) return console.error(err);
+    return res.json(restaurant);
+  });
+});
 
   //toggle restaurant open/close flag
   router.put('/toggleFlag/:restaurantId/:status', function (req, res, next) {
@@ -63,7 +75,6 @@ router.get('/getAllPhoneNumbers/:phoneNumber', function (req, res, next) {
   if (err) return console.log(err);
   return res.json(restaurants);
   }); */
-});
 
 // post
 router.post('/postRestaurantEntry', function (req, res, next) {

@@ -54,12 +54,13 @@ router.post('/validatePhoneNumber', function (req, res, next) {
 });
 
   //toggle restaurant open/close flag
-  router.put('/toggleFlag/:restaurantId/:status', function (req, res, next) {
-      console.log(req.params.status);
-      // Find all data in the Order collection 
-      var query = {
-        'restaurantId': req.params.restaurantId
-      };
+  router.put('/toggleFlag/:entityId/:restaurantId/:status', function (req, res, next) {
+      var query = [{
+        "entityId": req.params.entityId
+      }, {
+        "restaurantId": req.params.restaurantId
+      }];
+      
       let newData = {"disabled" : req.params.status};
       Restaurant.findOneAndUpdate(query, newData, {
         upsert: false

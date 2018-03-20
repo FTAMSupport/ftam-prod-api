@@ -19,6 +19,21 @@ router.get('/getByRestaurantId/:restaurantId', function (req, res, next) {
   });
 });
 
+// return restaurant info for a given restaurant_id and entity_id
+router.get('/getByEntityIdAndRestaurantId/:entityId/:restaurantId', function (req, res, next) {
+  Restaurant.find({
+      $and: [{
+        "entityId": req.params.entityId
+      }, {
+        "restaurantId": req.params.restaurantId
+      }]
+    })
+    .exec(function (err, restaurant) {
+      if (err) return console.error(err);
+      return res.json(restaurant);
+    });
+});
+
 // return list of all the registered restaurants
 router.get('/getAllRestaurants', function (req, res, next) {
   // Find all data in the Restaurant collection

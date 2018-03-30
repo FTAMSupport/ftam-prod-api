@@ -14,11 +14,15 @@ function get_user_id(req, res, next) {
   return req.payload.username;
 }
 // Create new Order
+// -> Create an Accept Payment Transaction in Stripe
+// -> Save the order to DB
+// -> Text order details to FoodTruck Owner
+// -> Text order details to Customer
+// -> Send the Order details back to UI
 router.post('/', function (req, res, next) {
   let order = new Order(req.body.order);
   let payment = req.body.payment;
   console.log("payment info" + payment);
-  // PP -> Authorize and Charge - OLD
   // PP -> Create an Accept Payment Transaction - NEW
   var api_uri = config.api_uri + "/api/stripePay";
   request({
@@ -26,38 +30,26 @@ router.post('/', function (req, res, next) {
     method: 'POST',
     json: payment
   }, function (error, response, body) {
-    //    if (response && response.statusCode === 200) {
     if (response && response.statusCode === 200 && response.body.status === "succeeded") {
       order.transaction_id = response.body.balance_transaction;
       order.charge_id = response.body.id;
-      //order.transaction_id = response.body.transactionResponse.transId; 
       order.version = "1";
       order.order_key = uuid();
       order.order_status = "inprocess";
       order.set_piad = true;
       console.log('PP successfull!');
 
-      /*       // Built-in save method to save to order details to the Database
-            order.save().then(function () {
-              console.log('Order saved successfully!');
-              return res.json({
-                order: order.toPostJSON()
-              });
-            }).catch(next); */
-
-      // Built-in save method to save to order details to the Database
+      // Built-in save method to save order details to the Database
       order.save().then(function () {
+        //-- Text order details to Foodtruck Owner
         const order1 = order.toPostJSON();
         let message = 'Order # ' + order1.order_number;
-
         if (order1.customer_name) {
           message = message + ' \n ' + 'Name - ' + order1.customer_name;
         }
-
         if (order1.customer_phone_no) {
           message = message + ' \n ' + 'Phone #' + order1.customer_phone_no;
         }
-
         for (let value of order1.line_items) {
           message = message + '\n' + (value.quantity + ' QTY ' + value.name);
           if (value.notes) {
@@ -87,39 +79,27 @@ router.post('/', function (req, res, next) {
             })
           )
           .then(messages => {
-            console.log('Success! The SID for this SMS message is:');
-            console.log(message.sid);
-            console.log('Message sent on:');
-            console.log(message.dateCreated);
-            console.log('Order saved successfully!');
+            //-- Text order details to Customer
+            var custMessage = "Hi " + order1.customer_name + ", your Foodtrucks Around Me Order # " + order1.order_number + ". You will receive another text message when your Order is ready for pick-up!";
+            client.messages.create({
+              to:  order1.customer_phone_no,
+              from: config.twilio_from_number,
+              body: custMessage
+            }, function(error, message) {
+              if (!error) {
+                  return res.json({
+                    order: order.toPostJSON()
+                    });
+              } else {
+                          console.log('Oops! There was an error sending order details to customer.');
+            }
+          })
+/*           //--return the order details back to UI confrmation screen
             return res.json({
               order: order.toPostJSON()
             });
-          })
+ */          })
           .catch(err => console.error(err));
-        /*         var toPhoneNumbers = order1.contact; 
-                Object.keys(toPhoneNumbers).map(function(key, index) {
-                  console.log(toPhoneNumbers[key].phone);
-                  client.messages.create({
-                      to:  toPhoneNumbers[key].phone, //'+14795448054',
-                      from: '+14797778337',
-                      body: message
-                     // mediaUrl: 'https://static.wixstatic.com/media/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png/v1/fill/w_266,h_264,al_c,usm_0.66_1.00_0.01/ac525e_61fec83160824138b2bfa5cd94e3d77b~mv2.png'
-                  }, function(error, message) {
-                      if (!error) {
-                          console.log('Success! The SID for this SMS message is:');
-                          console.log(message.sid);
-                          console.log('Message sent on:');
-                          console.log(message.dateCreated);
-                          console.log('Order saved successfully!');
-                          return res.json({
-                            order: order.toPostJSON()
-                            });
-                      } else {
-                                  console.log('Oops! There was an error.');
-                    }
-                  })
-               }); */
       }).catch(next);
     } else {
       console.log('PP error!');

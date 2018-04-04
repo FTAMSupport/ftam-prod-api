@@ -80,7 +80,25 @@ router.post('/', function (req, res, next) {
           )
           .then(messages => {
             //-- Text order details to Customer
-            var custMessage = "Hi " + order1.customer_name + ", your Foodtrucks Around Me Order # " + order1.order_number + ". You will receive another text message when your Order is ready for pick-up!";
+            //var custMessage = "Hi " + order1.customer_name + ", your Foodtrucks Around Me Order # " + order1.order_number + ". You will receive another text message when your Order is ready for pick-up!";
+                   
+        const order1 = order.toPostJSON();
+        let message = 'Order # ' + order1.order_number;
+        if (order1.customer_name) {
+          message = message + ' \n ' + 'Name - ' + order1.customer_name;
+        }
+        if (order1.customer_phone_no) {
+          message = message + ' \n ' + 'Phone #' + order1.customer_phone_no;
+        }
+        for (let value of order1.line_items) {
+          message = message + '\n' + (value.quantity + ' QTY ' + value.name);
+          if (value.notes) {
+            message = message + ' - ' + value.notes;
+          }
+        }
+        message = messager + '\n' + "You will receive a text message when it's ready for pick-up!";
+                   
+            
             client.messages.create({
               to:  order1.customer_phone_no,
               from: config.twilio_from_number,

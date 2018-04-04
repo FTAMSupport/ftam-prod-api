@@ -96,21 +96,19 @@ router.post('/', function (req, res, next) {
             message = message + ' - ' + value.notes;
           }
         }
-        message = messager + '\n' + "You will receive a text message when it's ready for pick-up!";
-                   
-            
+        message = message + '\n' + "You will receive a text message when it's ready for pick-up!";
             client.messages.create({
               to:  order1.customer_phone_no,
               from: config.twilio_from_number,
-              body: custMessage
+              body: message
             }, function(error, message) {
               if (!error) {
                   return res.json({
                     order: order.toPostJSON()
                     });
               } else {
-                          console.log('Oops! There was an error sending order details to customer.');
-            }
+                  console.log('Oops! There was an error sending order details to customer.');
+              }
           })
 /*           //--return the order details back to UI confrmation screen
             return res.json({

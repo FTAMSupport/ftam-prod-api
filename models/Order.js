@@ -18,6 +18,16 @@ var OrderSchema = new mongoose.Schema({
     match: [/^[a-zA-Z]+$/, 'is invalid'],
     index: true
   },
+  restaurant_name:  {
+    type: mongoose.Schema.Types.String,
+    required: [false, "can't be blank"],
+    index: false
+  },
+  restaurant_phone:  {
+    type: mongoose.Schema.Types.String,
+    required: [false, "can't be blank"],
+    index: false
+  },
   contact: [{
     phone: {
       type: mongoose.Schema.Types.String,
@@ -526,6 +536,8 @@ OrderSchema.methods.toPostJSON = function () {
     order_number: this.order_number,
     order_status: this.order_status,
     contact: this.contact,
+    restaurant_name: this.restaurant_name,
+    restaurant_phone: this.restaurant_phone,
     total: this.total,
     customer_phone_no: this.customer_phone_no,
     customer_name: this.customer_name,

@@ -3,12 +3,12 @@ var uniqueValidator = require('mongoose-unique-validator');
 
 var AppSchema = new mongoose.Schema({
   appPackageName: {
-    type: mongoose.Schema.Types.Number,
+    type: String,
     required: [true, "can't be blank"],
     index: true
   },
   appVersionNumber: {
-    type: mongoose.Schema.Types.Number,
+    type: String,
     required: [true, "can't be blank"],
     index: true
   },
@@ -24,7 +24,9 @@ AppSchema.methods.toPostJSON = function () {
   return {
     appPackageName: this.appPackageName,
     appVersionNumber: this.appVersionNumber,
-    appName: this.appName
+    appName: this.appName,
+    env: this.env,
+    type: this.type
   };
 };
 

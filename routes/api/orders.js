@@ -83,11 +83,13 @@ router.post('/', function (req, res, next) {
             //var custMessage = "Hi " + order1.customer_name + ", your Foodtrucks Around Me Order # " + order1.order_number + ". You will receive another text message when your Order is ready for pick-up!";
                    
         const order1 = order.toPostJSON();
-        let message = "Hi " + order1.customer_name + ". Thank you! You will receive a text message when it's ready for you to pick-up.";
-        message = message + '\n \n' + '\n' + 'Your Order # ' + order1.order_number;
+       // let message = "Hi " + order1.customer_name + ". Thank you Benji! You will receive a text message when it's ready for you to pick-up.";
+       let message = "Thank you " + order1.customer_name + " for your order! We will text you when your food is ready for pick-up.";
+       
+       message = message + '\n' + '\n' + 'Your Order # ' + order1.order_number;
         if (order1.customer_name) {
           message = message + '\n' + 'Location - ' + order1.restaurant_name;
-        }
+        } 
         if (order1.customer_phone_no) {
           message = message + '\n' + 'Phone #' + order1.restaurant_phone;
         }

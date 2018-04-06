@@ -64,6 +64,7 @@ if (isProduction) {
 require('./models/User');
 require('./models/Restaurant');
 require('./models/Foodtruck');
+require('./models/App');
 require('./models/Menu');
 require('./models/Order');
 require('./config/passport');

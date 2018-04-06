@@ -1,5 +1,6 @@
 var router = require('express').Router();
 
+router.use('/app', require('./app'));
 router.use('/restaurant', require('./restaurants'));
 router.use('/menu', require('./menus'));
 router.use('/foodtrucks', require('./foodtrucks'));
